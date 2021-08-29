@@ -39,8 +39,6 @@ def train(model, train_loader, optimizer, epoch):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
-        print("output:", output)
-        print("target:", target)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -60,12 +58,16 @@ def test(model, test_loader):
             test_loss += F.nll_loss(output, target, reduction='sum').item() # sum up batch loss
             pred = output.argmax(dim=1, keepdim=True)
             test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
+            # print("output:", output)
+            # print("pred:", pred)
+            # print("target:", target)
+            # print("target.view_as(pred):", target.view_as(pred))
             correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_loss /= len(test_loader.dataset)
 
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset), (correct / len(test_loader.dataset))))
+    # print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        # test_loss, correct, len(test_loader.dataset), (correct / len(test_loader.dataset))))
     return test_loss, correct
 
 
@@ -109,7 +111,7 @@ def main():
         train(model, train_loader, optimizer, epoch)
         test_loss, correct = test(model, test_loader)
         print('Test set: Average loss: {:.4f}, Accuracy: {}/{} ({:.1f}%)\n'.format(
-                test_loss, correct, len(test_loader.dataset), (correct / len(test_loader.dataset))))
+                test_loss, correct, len(test_loader.dataset), (100 * correct / len(test_loader.dataset))))
         scheduler.step()
 
     # Save model
